@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createUser, getAllTechnologies } from "../../Redux/Actions/Actions";
+import { getAllTechnologies } from "../../Redux/Actions/Actions";
 import Card from "react-bootstrap/Card";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Button from "react-bootstrap/Button";
-import { Widget } from "@uploadcare/react-widget";
+import style from "./register.module.css";
 import { useParams } from "react-router-dom";
 
 export default function RegisterUser() {
@@ -208,18 +208,26 @@ export default function RegisterUser() {
     "Zimbabwe",
   ];
   const { state } = useParams();
+  const tecnologias = [
+    "Javascript",
+    "React",
+    "Redux",
+    "HTML5",
+    "CSS3",
+    "Boostrap",
+    "Jquery",
+    "Java",
+  ];
   const technologies = useSelector((state) => state.technologies);
-  const [employ, setEmploy] = useState(false);
   const [selectedTechs, setSelected] = useState([]);
   const [country, setCountry] = useState("");
-  const [uuid, setUuid] = useState("");
   const [input, setInput] = useState({
     name: "",
     email: "",
     age: 0,
     linkedin: "",
     desc: "",
-    employ: "",
+    cv: null,
   });
   const dispatch = useDispatch();
 
@@ -252,30 +260,6 @@ export default function RegisterUser() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let empleado = employ ? "empleado" : "desempleado";
-    if (employ) {
-      let company = input.employ;
-      let descript = input.desc;
-      setInput({
-        ...input,
-        desc: descript.concat(` This user Works at ${company}`),
-      });
-    }
-    let newUser = {
-      email: input.email,
-      name: input.name,
-      employment_status: empleado,
-      age: parseInt(input.age),
-      image: "no image",
-      description: input.desc,
-      technologies: selectedTechs,
-      nationality: country,
-      url: input.linkedin,
-      cv: `ucarecdn.com/${uuid}`,
-    };
-    console.log(newUser);
-
-    dispatch(createUser(newUser));
 
     window.location.replace(
       `https://dev-zgaxo6rs.us.auth0.com/continue?state=${state}`
@@ -302,19 +286,18 @@ export default function RegisterUser() {
           ))}
         </label>
         <DropdownButton id="dropdown-basic-button" title="Select Technologies">
-          {technologies &&
-            technologies.map((tech, index) => {
-              return (
-                <Dropdown.Item
-                  onClick={() => {
-                    addTechs(tech.name);
-                  }}
-                  key={index}
-                >
-                  {tech.name}
-                </Dropdown.Item>
-              );
-            })}
+          {tecnologias.map((tech, index) => {
+            return (
+              <Dropdown.Item
+                onClick={() => {
+                  addTechs(tech);
+                }}
+                key={index}
+              >
+                {tech}
+              </Dropdown.Item>
+            );
+          })}
         </DropdownButton>
         <br />
         <label>Country of Origin: {country}</label>
@@ -346,34 +329,8 @@ export default function RegisterUser() {
         <label>Description:</label>{" "}
         <textarea name="desc" onChange={(e) => handleChange(e)} />
         <br />
-        <div>
-          <label>Are you employed?</label>
-          <input
-            type="checkbox"
-            name="employment"
-            id=""
-            onClick={() => setEmploy(!employ)}
-          />
-
-          <br />
-          <input
-            type="text"
-            name="employ"
-            placeholder="Place of employment"
-            style={{ display: employ ? "" : "none" }}
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-        <br />
         <label>CV:</label>{" "}
-        <Widget
-          publicKey="de7dc23d760e287d1cb0"
-          clearable
-          onChange={(file) => {
-            setUuid(file.uuid);
-          }}
-        />
-        {/* <input type={"file"} name="cv" onChange={(e) => handleChange(e)} /> */}
+        <input type={"file"} name="cv" onChange={(e) => handleChange(e)} />
       </form>
       <br />
       <div>
