@@ -1,6 +1,7 @@
 const Chance = require("chance"); //genera datos aleatoriamente, para llenar los campos de la BD
 const chance = new Chance();
 
+//arreglo con los datos de usuario que llenaran la tabla de usuarios
 const fakeUserData = [
   [
     "t0mshaster5@gmail.com",
